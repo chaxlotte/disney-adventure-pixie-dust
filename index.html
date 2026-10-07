@@ -50,7 +50,7 @@ addBtn.onclick=addRoom;room.onkeydown=e=>{if(e.key==="Enter")addRoom()};search.o
 
 async function start(){
  try{const first=await getDoc(DATA_DOC);if(!first.exists()){await setDoc(DATA_DOC,{rooms:clone(ORIGINAL),preferredNames:{},trickOrTreat:{},updatedAt:Date.now()})}
- onSnapshot(DATA_DOC,snap=>{if(!snap.exists())return;const data=snap.data();rooms=data.rooms||clone(ORIGINAL);preferredNames=data.preferredNames||{};trickOrTreat=data.trickOrTreat||{};ready=true;addBtn.disabled=false;render();renderSummary();if(status.classList.contains("sync"))message("Connected. Changes are shared live.")},error=>{console.error(error);addBtn.disabled=true;message("Firebase connection failed. Check Firestore is enabled and its rules allow access.","error")})
+ onSnapshot(DATA_DOC,snap=>{if(!snap.exists())return;const data=snap.data();rooms = { ...clone(ORIGINAL), ...(data.rooms || {}) };DECKS.forEach(d => {if (!Array.isArray(rooms[d])) rooms[d] = [];});;preferredNames=data.preferredNames||{};trickOrTreat=data.trickOrTreat||{};ready=true;addBtn.disabled=false;render();renderSummary();if(status.classList.contains("sync"))message("Connected. Changes are shared live.")},error=>{console.error(error);addBtn.disabled=true;message("Firebase connection failed. Check Firestore is enabled and its rules allow access.","error")})
  }catch(error){console.error(error);addBtn.disabled=true;message("Firebase connection failed. Check Firestore is enabled and its rules allow access.","error")}
 }
 addBtn.disabled=true;render();renderSummary();start();
